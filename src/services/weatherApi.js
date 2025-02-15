@@ -1,5 +1,7 @@
+
 const API_KEY = process.env.REACT_APP_WEATHER_API_KEY; // Store in .env
 const BASE_URL = "https://api.openweathermap.org/data/2.5";
+
 
 
 export const fetchCurrentConditions = async (city) => {
@@ -8,8 +10,6 @@ export const fetchCurrentConditions = async (city) => {
       `${BASE_URL}/weather?q=${city}&units=imperial&appid=${API_KEY}`
     );
     const data = await response.json();
-
-    console.log(data)
 
     if (response.ok) {
       return {
@@ -48,6 +48,8 @@ export const fetchForecast = async (city) => {
         time: new Date(item.dt * 1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         temp: Math.round(item.main.temp),
         icon: `https://openweathermap.org/img/wn/${item.weather[0].icon}.png`,
+        condition: item.weather[0].description, // Weather condition (e.g., "clear sky", "rain")
+        windSpeed: item.wind.speed, // Wind speed in the specified unit
       }));
     } else {
       throw new Error(data.message);
@@ -57,5 +59,25 @@ export const fetchForecast = async (city) => {
   }
 };
 
+
+export const fetchWeatherData = async (city) => {
+  const apiKey = process.env.REACT_APP_VISUAL_CROSSING_WEATHER_API_KEY;
+  const baseUrl = 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/';
+
+  const encodedCity = encodeURIComponent(city);
+  const url = `${baseUrl}/${encodedCity}?unitGroup=us&key=${apiKey}&contentType=json`;
+  
+  try {
+    const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Error fetching weather data: ${response.statusText}`);
+        }
+        const data = await response.json();
+        return data;
+    
+  } catch (error) {
+    throw error;
+  }
+};
 
 
